@@ -1,0 +1,103 @@
+package test;
+
+import org.testng.annotations.Test;
+
+import listener.annotation.Xray;
+import page.models.OrdonnancePDF;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.PageTraitementsComplementaires;
+import page.models.TextEditorPage;
+
+public class CQ_1118_TxtCtrl_Utilisation_de_l_éditeur_de_texte_depuis_la_Prescription_Complémentaire extends BaseTest{
+	
+	@Test
+	@Xray(test="CQ-1118")
+	public void TxtCtrl_Utilisation_d_un_modèle_crée() {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("TEXTCTRL");
+		pageDossierAdministratif.renseignerNomDeNaissance("TEXTCTRL");
+		pageDossierAdministratif.renseignerPrenom("CQ1118");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/1990");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatients = new PageListePatient();
+		pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.retourAccueil();
+		pageAccueil.rechercherLePatientAvecLeNomEtOuvrirSonDossierMedical(nomPatient);
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescriptionsComplementaires();
+		PageTraitementsComplementaires pageTraitementsComplementaires= new PageTraitementsComplementaires();
+		pageTraitementsComplementaires.gerer_les_ordonnances_en_format_editeur_text();
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Arthroscopie de l'épaule");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Arthroscopie de l'épaule");
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Radiographie du membre inférieur");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Radiographie du membre inférieur");
+		pageTraitementsComplementaires.cocher_ALD("Arthroscopie");
+		pageTraitementsComplementaires.validerEtImprimer();
+		TextEditorPage textEditorPage = new TextEditorPage();
+		 textEditorPage.switchTowindow(1);
+		textEditorPage.valider_et_ouvrir_le_document();
+		OrdonnancePDF ordonnancePDF = new OrdonnancePDF();
+		ordonnancePDF.switchTowindow(2);
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("Radiographie du membre inférieur ");
+		textEditorPage.switchTowindow(1);
+		textEditorPage.saisie_des_informations_dans_le_pdf("CQ1118");
+		textEditorPage.switchTowindow(0);
+		pageDossierMedical.prescriptionsComplementaires();
+		pageTraitementsComplementaires.gerer_les_ordonnances_en_format_PDF();
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.ajout_des_commentaire_dans_l_ordonnance("une calcémie (corrigée en fonction de l’albuminémie protidémie) si IgA ou IgG, dosage des LDH si IgM ");
+		pageTraitementsComplementaires.validerEtImprimer();
+		ordonnancePDF.switchTowindow(1);
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("une calcémie");
+		ordonnancePDF.switchTowindow(0);
+		pageDossierMedical.prescriptionsComplementaires();
+		pageTraitementsComplementaires.gerer_les_ordonnances_en_format_editeur_text();
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.ajout_des_commentaire_dans_l_ordonnance("une calcémie (corrigée en fonction de l’albuminémie protidémie) si IgA ou IgG, dosage des LDH si IgM ");
+		pageTraitementsComplementaires.validerEtImprimer();
+		textEditorPage.switchTowindow(1);
+		textEditorPage.verifier_contenu_de_l_ordonnace("une calcémie");
+		textEditorPage.fermer_window();
+		textEditorPage.switchTowindow(0);
+		pageDossierMedical.prescriptionsComplementaires();
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Anticorps anti-ADN dénaturé");
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Anticorps anti-ADN natif");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Anticorps anti-ADN natif");
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Figure complexe de Rey");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Figure complexe de Rey");
+		pageTraitementsComplementaires.rechercherTraitementComplementaire("Le code");
+		pageTraitementsComplementaires.cliquerBoutonRechercher();
+		pageTraitementsComplementaires.selectionnerTraitementsComplementaires("Le code");
+		pageTraitementsComplementaires.validerEtImprimer();
+		textEditorPage.switchTowindow(1);
+
+	
+	
+	}
+}

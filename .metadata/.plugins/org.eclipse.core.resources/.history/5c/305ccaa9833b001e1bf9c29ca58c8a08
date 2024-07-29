@@ -1,0 +1,244 @@
+package clm.interop.webdrivermanager;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import clm.interop.Log;
+import clm.interop.enumerator.Browser;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import utils.properties.PropertiesReader;
+
+public class Driver {
+	private static RemoteWebDriver instance = null;
+	private static Browser browser = null;
+	
+	public static RemoteWebDriver getInstance() {
+		return Driver.instance;
+	}
+	
+	public static Browser getBrowser() {
+		return Driver.browser;
+	}
+	
+	public static WebDriverWait getWait() {
+		return new WebDriverWait(instance, 60);
+	}
+	
+	public static RemoteWebDriver getInstance(Browser browser) {
+		if (Driver.instance == null) {
+			setUpWebDriver(browser);
+			setBrowser(browser);
+		}
+		return Driver.instance;
+	}
+	
+	public static RemoteWebDriver getInstance(Browser browser, String test) {
+		if (Driver.instance == null) {
+			setUpWebDriver(browser);
+			setBrowser(browser);
+		}
+		return Driver.instance;
+	}
+	
+	public static void close() {
+		if (Driver.instance != null) {
+			Driver.instance.quit();
+			Driver.instance = null;
+		}
+	}
+	
+	private static void setUpWebDriver(Browser browser) {
+		if (browser == Browser.CHROME) {
+			setUpChromeDriver();
+		} else if (browser == Browser.FIREFOX) {
+			setUpFirefoxDriver();
+		} else if (browser == Browser.EDGE) { 
+			setUpEdgeDriver();
+		} else if (browser == Browser.REMOTE) {
+			setUpRemoteDriver();
+		}else {
+			new Exception("Le navigateur " + browser + "n'existe pas");
+			return ;
+		}
+	}
+	
+	private static List<String> getDriverOptions() {
+		List<String> options = new ArrayList<String>();
+		Properties properties = PropertiesReader.openFile("driver"); 
+		Set<String> keys = properties.stringPropertyNames();
+		
+		for (String key : keys) {
+			if (Boolean.parseBoolean(properties.getProperty(key))) {
+				options.add("-" + key);
+			}
+		}
+		
+		addOrRemoveHeadlessModeOption(options);
+		
+		if (options.contains("-headless")) {
+			if (options.contains("-start-maximized")) {
+				options.remove("-start-maximized");
+			}
+			options.add("-window-size=1920,1080");
+		}
+		
+		return options;
+	}
+	
+	/**
+	 * Ajoute l'option headless dans les options si l'option n'est pas présent de base et que la valeur donné par maven est true.
+	 * SI la valeur donnée par maven est false, la supprime.
+	 * @param List<String> Liste d'options
+	 * @return Liste d'options
+	 */
+	private static List<String> addOrRemoveHeadlessModeOption(List<String> options) {
+		if (System.getProperty("execution.headless").length() > 0 && !options.contains("-headless") && Boolean.parseBoolean(System.getProperty("execution.headless"))) {
+			options.add("-headless");
+		}
+		
+		if (System.getProperty("execution.headless").length() > 0 && options.contains("-headless") && !Boolean.parseBoolean(System.getProperty("execution.headless"))) {
+			options.remove("-headless");
+		}
+		
+		return options;
+	}
+	
+	private static void setUpChromeDriver() {
+		WebDriverManager.chromedriver().setup();
+		//HashMap<String,Object> chromePrefs = new HashMap<String, Object>();
+		//chromePrefs.put("plugins.always_open_pdf_externally", true);
+		ChromeOptions chromeOptions = new ChromeOptions();
+		List<String> options = getDriverOptions();
+		if (!options.isEmpty())
+			chromeOptions.addArguments("--lang=fr");
+			chromeOptions.addArguments(options);
+			chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
+			//chromeOptions.setExperimentalOption("prefs", chromePrefs);
+
+		Driver.instance = new ChromeDriver(chromeOptions);
+	}
+	
+	private static void setUpFirefoxDriver() {
+		WebDriverManager.firefoxdriver().setup();
+		FirefoxOptions firefoxOptions = new FirefoxOptions();
+		
+		List<String> options = getDriverOptions(); 
+		if (!options.isEmpty())
+			firefoxOptions.addArguments("--lang=fr");
+			firefoxOptions.addArguments(options);
+		Driver.instance = new FirefoxDriver(firefoxOptions);
+		if (!options.isEmpty() && options.contains("-start-maximized")) {
+			Driver.instance.manage().window().maximize();
+		}
+	}
+	
+	private static void setUpEdgeDriver() {
+		WebDriverManager.edgedriver().setup();
+		List<String> options = getDriverOptions();
+		Driver.instance = new EdgeDriver();
+		if (!options.isEmpty() && options.contains("-start-maximized")) {
+			Driver.instance.manage().window().maximize();
+		}
+	}
+	
+	private static void setUpRemoteDriver() {
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--lang=fr");
+		Properties properties = PropertiesReader.openFile("capabilities");
+		DesiredCapabilities capabilities = getDesiredCapabalities(properties);
+		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+		capabilities.setCapability("platform", "Windows 11");
+		capabilities.setCapability("screenResolution", "1280x1024");
+		URL url = null;
+		try {
+			String string_url = getSystemPropertyOrFileProperty(properties, "remote", "url");
+			url = new URL(string_url);
+		} catch (MalformedURLException e) {
+			Log.error("L'url n'a pas été bien formé", e);
+		}
+		
+		Driver.instance = new RemoteWebDriver(url, capabilities);
+	}
+	
+	public static void saveSession() {
+		Session.saveSession(getInstance());
+	}
+	
+	public static void attachSession() {
+		Driver.instance = Session.attachSession(instance);
+	}
+	
+	private static void verifyMandatoryCapabilities(Properties properties, Set<String> keys) throws Exception {
+		String errorMessage = "";
+		String url = "url";
+		String browserName = "browserName";
+		String browserVersion = "version";
+		String platformName = "platform";
+		if (!properties.containsKey(url) || properties.getProperty(url).length() == 0) {
+			errorMessage = String.format("%s\n\t-%s", errorMessage, url);
+		}
+		
+		if (!properties.containsKey(browserName) || properties.getProperty(browserName).length() == 0) {
+			errorMessage = String.format("%s\n\t-%s", errorMessage, browserName);
+		}
+		
+		if (!properties.containsKey(browserVersion) || properties.getProperty(browserVersion).length() == 0) {
+			errorMessage = String.format("%s\n\t-%s", errorMessage, browserVersion);
+		}
+		
+		if (!properties.containsKey(platformName) || properties.getProperty(platformName).length() == 0) {
+			errorMessage = String.format("%s\n\t-%s", errorMessage, platformName);
+		}
+		if (errorMessage.length() > 0) {
+			errorMessage = String.format("%s\nMerci de les rajouter dans le fichier src/test/resources/config/capabilities.properties !", errorMessage);
+			throw new Exception("Il manque les capabilities pour :" + errorMessage);
+		}
+	}
+	
+	private static DesiredCapabilities getDesiredCapabalities(Properties properties) {
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+		Set<String> keys = properties.stringPropertyNames();
+		
+		try {
+			verifyMandatoryCapabilities(properties, keys);
+		} catch (Exception e) {
+			Log.fatal(e.getMessage());
+		}
+		
+		for (String key : keys) {
+			if (!key.equals("url")) {
+				capabilities.setCapability(key, getSystemPropertyOrFileProperty(properties, "remote", key));
+			}
+		}
+
+		return capabilities;
+	}
+	
+	private static String getSystemPropertyOrFileProperty(Properties p, String surefireFeature, String property) {
+		return System.getProperty(String.format("%s.%s", surefireFeature, property)).length() == 0 ? 
+				p.getProperty(property) : System.getProperty(String.format("%s.%s", surefireFeature, property)); 
+	}
+	
+	private static void setBrowser(Browser browser) {
+		if (browser == Browser.REMOTE) {
+			Driver.browser = Browser.valueOf(Driver.instance.getCapabilities().getBrowserName().toUpperCase());
+		} else {
+			Driver.browser = browser;
+		}
+	}
+}

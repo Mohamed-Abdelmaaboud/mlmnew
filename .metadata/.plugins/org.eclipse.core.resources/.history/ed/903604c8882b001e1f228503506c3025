@@ -1,0 +1,221 @@
+package test;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import clm.interop.Log;
+import listener.annotation.Xray;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.PageTraitements;
+import page.module.ModuleAjoutProduits;
+
+public class Tests_Depassement_Duree_Traitement__Max extends BaseTest{
+	
+	@Xray(test="CQ-189")
+	  @Test(description="HAVLANE")
+	  public void HAVLANE_CQ_189()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ189");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("HAVLANE");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("HAVLANE");
+		moduleAjoutProduits.editerPosologie("Traitement symptomatique");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("0.5");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("60");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		moduleAjoutProduits.prescrire();
+		Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recupereLtextAlertContrôlePosologieDuréeMaximale()
+				.contains("Attention ! la durée maximale est : 28 jour(s)"));
+		
+
+}
+	
+	@Xray(test="CQ-190")
+	  @Test(description="IMOVANE")
+	  public void IMOVANE_CQ_190()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ190");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("IMOVANE 7.5MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("IMOVANE 7,5 mg");
+		moduleAjoutProduits.editerPosologie("1 comprimé le soir au couch");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("60");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		moduleAjoutProduits.prescrire();
+		//moduleAjoutProduits.verifierAlertQantiteMaximaleJournaliere("Attention ! la durée maximale est : 28 jour(s)");		Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recupereLtextAlertContrôlePosologieDuréeMaximale()
+				.contains("Attention ! la durée maximale est : 28 jour(s)"));
+		
+
+}
+	@Xray(test="CQ-191")
+	  @Test(description="MOGADON")
+	  public void MOGADON_CQ_191()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ191");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("MOGADON 5MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("MOGADON 5 mg");
+		moduleAjoutProduits.editerPosologie("1 comprimé immédiatement avant le coucher à avaler avec un verre d'eau pendant 2 à 28 jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("29");
+		moduleAjoutProduits.prescrire();
+		Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recupereLtextAlertContrôlePosologieDuréeMaximale()
+				.contains("Attention ! la durée maximale est : 28 jour(s)"));
+		
+
+}
+	@Xray(test="CQ-192")
+	  @Test(description="LORMETAZEPAM 1MG")
+	  public void LORMETAZEPAM_CQ_192()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ192");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("LORMETAZEPAM 1MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("LORMETAZEPAM");
+		moduleAjoutProduits.editerPosologie("½ comprimé avant le coucher à avaler avec un peu de liquide pendant 2 à 28 jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("29");
+		moduleAjoutProduits.prescrire();
+		Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recupereLtextAlertContrôlePosologieDuréeMaximale()
+				.contains("Attention ! la durée maximale est : 28 jour(s)"));
+		
+
+}
+	
+	
+	@Xray(test="CQ-193")
+	  @Test(description="STILNOX ")
+	  public void STILNOX_CQ_193()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ193");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("STILNOX 10MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("STILNOX 10 mg");
+		moduleAjoutProduits.editerPosologie("un demi (½) comprimé immédiatement avant le coucher pendant deux (2) à vignt-huit (28) jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("56");
+		moduleAjoutProduits.prescrire();
+		Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recupereLtextAlertContrôlePosologieDuréeMaximale()
+				.contains("Attention ! la durée maximale est : 28 jour(s)"));
+		
+
+}
+	
+	
+}

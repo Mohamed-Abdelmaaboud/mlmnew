@@ -1,0 +1,73 @@
+package test;
+
+import java.awt.AWTException;
+
+import org.testng.annotations.Test;
+
+import listener.annotation.Xray;
+import page.models.OrdonnancePDF;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.TextEditorPage;
+
+public class CQ_1116_TxtCtrl_Utilisation_de_l_éditeur_de_texte_depuis_les_Documents extends BaseTest{
+	
+	@Test
+	@Xray(test="CQ-1116")
+	public void TxtCtrl_Utilisation_d_un_modèle_crée() throws AWTException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("TEXTCTRL");
+		pageDossierAdministratif.renseignerNomDeNaissance("TEXTCTRL");
+		pageDossierAdministratif.renseignerPrenom("CQ1116");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatients = new PageListePatient();
+		pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.retourAccueil();
+		pageAccueil.rechercherLePatientAvecLeNomEtOuvrirSonDossierMedical(nomPatient);
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.cree_un_document_vierge_depuis_les_documents();
+		TextEditorPage textEditorPage = new TextEditorPage();
+		textEditorPage.switchTowindow(1);
+		textEditorPage.ajout_signets("Prénom");
+		textEditorPage.inserer_image_dans_PDF("C:\\Users\\mabdelmaaboud\\Desktop\\R");
+		textEditorPage.renseigner_type_de_document("Attestation de dépistage");
+		textEditorPage.verifier_que_les_champs_signets_sont_rempli_automatiquement("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Cq116");
+		textEditorPage.valider_le_document();
+		pageDossierMedical.switchTowindow(0);
+		pageDossierMedical.validerAccesDMPetINS();
+		pageDossierMedical.ouvrir_le_document_pdf("Courrier vierge");
+		pageDossierMedical.verifier_existence_texte_dans_le_document_pdf("https://mlmpreprod.monlogicielmedical.com/report-manager-webapp//freeEditor/downloadReport129688411.pdf","Cq116");
+		pageDossierMedical.switchTowindow(1);
+		pageDossierMedical.cree_un_document_vierge_depuis_les_documents();
+		textEditorPage.switchTowindow(1);
+		textEditorPage.ajout_signets("Nom de naissance");
+		textEditorPage.renseigner_type_de_document("Attestation de dépistage");
+		textEditorPage.verifier_que_les_champs_signets_sont_rempli_automatiquement("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Cq116");
+		textEditorPage.valider_et_ouvrir_le_document();
+		OrdonnancePDF ordonnancePDF = new OrdonnancePDF();
+		ordonnancePDF.switchTowindow(2);
+		 ordonnancePDF.verifier_contenu_de_l_ordonnace("blob:https://mlmpreprod.monlogicielmedical.com/5a96bbe0-ef85-4dee-a318-1c500e62b5dc","CTRL");
+	}
+	
+	
+	
+	
+	
+
+}

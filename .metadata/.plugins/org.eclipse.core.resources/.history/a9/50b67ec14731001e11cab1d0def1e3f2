@@ -1,0 +1,84 @@
+package test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.testng.annotations.Test;
+
+import listener.annotation.Xray;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.PageTraitements;
+import page.models.TextEditorPage;
+import page.module.ModuleAjoutProduits;
+
+public class CQ_2750_Fonctionnement_de_la_mention_A_partir_du extends BaseTest{
+	
+	LocalDateTime date_du_jour = LocalDateTime.now().plusDays(1);
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	String date = date_du_jour.format(formatter);
+	
+
+	@Xray(test = "CQ-2750")
+	@Test(description = "impression de la mension a partir du sur les prescriptions de medicaments")
+	public void impression_de_la_mension_a_partir_du_sur_les_prescriptions_de_medicaments_CQ_2619() throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("TEXTCTRL");
+		pageDossierAdministratif.renseignerNomDeNaissance("TEXTCTRL");
+		pageDossierAdministratif.renseignerPrenom("CQ2750");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatients = new PageListePatient();
+		pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.retourAccueil();
+		pageAccueil.rechercherLePatientAvecLeNomEtOuvrirSonDossierMedical(nomPatient);
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.gerer_les_ordonnances_en_format_editeur_text();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		pageTraitements.commencerNouveauTraitement();
+        moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("HAVLANE");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("HAVLANE");
+		moduleAjoutProduits.editerPosologie("Traitement symptomatique");
+		prescrireMedicament("Doliprane", "DOLIPRANE 1 000 mg Comprimé boîte de 8", "1 comprimé 1 à 3 fois par jour selon besoin, en espaçant les prises de 4h minimum");
+		prescrireMedicament("Kardegic", "KARDEGIC 160 mg, poudre pour solution buvable en sachet, sachets boîte de 30","1 sachet par jour à dissoudre dans un grand verre d'eau.");
+		prescrireMedicament("Pivalone", "PIVALONE 1 POUR CENT, suspension nasale, boîte de 1 flacon pulvérisateur de 10 ml", "1 à 2 pulvérisations 2 à 4 fois par jour dans chaque narine.");
+		pageTraitements = new PageTraitements();
+		pageTraitements.changerLaDateDePrescription(date);
+		pageTraitements.accepterEtImprimerOrdonnance();
+		TextEditorPage textEditorPage = new TextEditorPage();
+		textEditorPage.switchTowindow(1);
+		textEditorPage.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","A partir du");
+	}
+
+	private void prescrireMedicament(String nomProduit,String posologieAChoisir,String posologieAEditer) throws InterruptedException {
+		Thread.sleep(2000);
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit(nomProduit);
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie(posologieAChoisir);
+		moduleAjoutProduits.editerPosologie(posologieAEditer);
+		moduleAjoutProduits.prescrire_et_fermer();
+		
+	}
+	
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="D:\mlmnewprojects\mlm-texteditor-preprod-new"/>
+			<item value="D:\mlmnewprojects\mlm_text_editor_preprod_new"/>
+			<item value="D:\mlmnewprojects\mlm-filieris-preprod"/>
+			<item value="D:\mlmnewprojects\selenium-technical-base"/>
+			<item value="D:\mlm-texteditor-preprod"/>
+			<item value="D:\mlmnewprojects\maiia-agenda-preprod"/>
+			<item value="D:\mlmnewprojects\mlm-observatoire-preprod"/>
+			<item value="D:\mlmnewprojects"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.pom.overview">
+	</section>
+	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+</section>

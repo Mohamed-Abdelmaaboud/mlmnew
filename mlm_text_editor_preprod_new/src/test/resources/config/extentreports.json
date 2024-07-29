@@ -1,0 +1,13 @@
+{
+  "theme": "STANDARD",
+  "encoding": "utf-8",
+  "protocol": "HTTPS",
+  "timelineEnabled": false,
+  "offlineMode": true,
+  "thumbnailForBase64": true,
+  "documentTitle": "Reports MLM",
+  "reportName": "<img src='../src/test/resources/logo-mlm.png' style='max-height:25px; max-width:45px;'/>",
+  "timeStampFormat": "dd MMM yyyy HH:mm:ss",
+  "js": "",
+  "css": ""
+}

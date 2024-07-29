@@ -1,0 +1,398 @@
+package test;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import clm.interop.Log;
+import listener.annotation.Xray;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.PageTraitements;
+import page.module.ModuleAjoutProduits;
+import page.module.ModuleSaisieRapideBiometrie;
+
+public class Tests_Depssement_La_Posologie_Journaliere_Recommendee extends BaseTest{
+	
+	@Xray(test="CQ-175")
+	  @Test(description="CARBOPLATINE 10MG/ML ACCORD FL45ML")
+	  public void CARBOPLATINE_10MGML_ACCORD_FL45ML_CQ_175()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ175");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "161");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "55");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("CARBOPLATINE 10MG/ML ACCORD 60ML");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("CARBOPLATINE ACCORD 10 mg");
+		moduleAjoutProduits.editerPosologie("653 mg tous les 3 semaines en perfusion IV de 15 à 60 minutes.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("120");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("7");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		//moduleAjoutProduits.prescrire();
+		//Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale recommandée est : 9.3 ml"));
+		
+
+}
+	@Xray(test="CQ-172")
+	  @Test(description="DEPAKINE 200mg/ml")
+	  public void DEPAKINE_200mg_ml_CQ_172()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ172");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/10/2021");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "0");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "11");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("DEPAKINE 200mg/ml");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("DEPAKINE 200 mg");
+		moduleAjoutProduits.editerPosologie("110 mg 3 fois par jour à diluer dans un peu de boisson non gazeuse.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("1");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("ml");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+		moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("30");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		//moduleAjoutProduits.prescrire();
+		//Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière minimale recommandée est : 1.6 ml"));
+		
+
+}
+	@Xray(test="CQ-173")
+	  @Test(description="FLUDARA 10MG")
+	  public void FLUDARA_10MG_CQ_173()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ173");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/10/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "158");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "60");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("FLUDARA 10MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("FLUDARA 10 mg");
+		moduleAjoutProduits.editerPosologie("64.2 mg par jour à avaler entier avec de l'eau pendant 5 jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("10");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("comprimés");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale est : 6 comprimés"));
+		
+
+}
+	@Xray(test="CQ-170")
+	  @Test(description="FUCIDINE_06_Mois_07_Kg")
+	  public void FUCIDINE_06_Mois_07_Kg_CQ_170()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ170");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/10/2022");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "0");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "7");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("FUCIDINE 100MG/2ML NOUR");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("FUCIDINE Nourrisson 100 mg");
+		moduleAjoutProduits.editerPosologie("140 mg 2 à 3 fois par jour.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("2");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("cuillères-mesure");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+		moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("7");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale recommandée est : 4 cuillères-mesure"));
+		
+
+}
+	@Xray(test="CQ-177")
+	  @Test(description="ONCOVIN_171_Cm_60Kg")
+	  public void ONCOVIN_171_Cm_60Kg_CQ_177()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ177");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/10/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "171");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "60");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("ONCOVIN 1MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("ONCOVIN 1 mg");
+		moduleAjoutProduits.editerPosologie("2.38 mg 1 fois par semaine par voie IV.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("8");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("mg");
+//		moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+//		moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+//		moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("7");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale recommandée est : 0.340467 mg"));
+		
+
+}
+	@Xray(test="CQ-171")
+	  @Test(description="TIORFAN_10_Mois_08Kg")
+	  public void TIORFAN_10_Mois_08Kg_CQ_171()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ171");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/4/2022");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "0");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "8");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("TIORFAN 10MG NOURRISSON");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("TIORFAN 10 mg");
+		moduleAjoutProduits.editerPosologie("1 sachet 3 fois par jour au début des principaux repas pendant 1 à 7 jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("2");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("sachets");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+		moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("5");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale recommandée est : 4 sachets"));
+		
+
+}
+	@Xray(test="CQ-176")
+	  @Test(description="XELODA_168_Cm_60Kg")
+	  public void XELODA_168_Cm_60Kg_CQ_176()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ176");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "168");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "60");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("XELODA 500MG");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("XELODA 500 mg");
+		moduleAjoutProduits.editerPosologie("2100 mg matin et soir dans les 30 mn après le repas avec un peu d'eau pendant 14 jours.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("5");
+		//moduleAjoutProduits.choisir_dose_unitaire_unite("comprimés");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("1");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière maximale est : 8 comprimés"));
+		
+
+}
+	@Xray(test="CQ-174")
+	  @Test(description="VELBE - 159cm - 60 kg")
+	  public void VELBE_159cm_60_kg_CQ_174()throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("BCBUTO");
+		pageDossierAdministratif.renseignerNomDeNaissance("BCBAUTO");
+		pageDossierAdministratif.renseignerPrenom("CQ174");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("08/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatient = new PageListePatient();
+		pageListePatient.acceder_au_dossier_medical_du_premier_patient();
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ajouterBiometrie();
+		ModuleSaisieRapideBiometrie moduleSaisieRapideBiometrie = new ModuleSaisieRapideBiometrie();
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Taille", "159");
+		moduleSaisieRapideBiometrie.ajouterValeurBiometrie("Poids", "60");
+		moduleSaisieRapideBiometrie.validerSaisie();
+		pageDossierMedical.prescrireMedicaments();
+		PageTraitements pageTraitements = new PageTraitements();
+		pageTraitements.commencerNouveauTraitement();
+		ModuleAjoutProduits moduleAjoutProduits = new ModuleAjoutProduits();
+		moduleAjoutProduits.rechercherUnProduit("VELBE 10MG FL");
+		moduleAjoutProduits.ouvrirChoixDeLaPosologie("VELBE 10 mg");
+		moduleAjoutProduits.editerPosologie("6.45 à 11.3 mg tous les 7 jours en perfusion IV rapide de 5 à 10 mn après dilution.");
+		moduleAjoutProduits.ajouterNombreDeDoseUnitaire("40");
+		moduleAjoutProduits.choisir_dose_unitaire_unite("ml");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("Ma");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("Mi");
+		//moduleAjoutProduits.choisirMomentDeLaPrise("So");
+		moduleAjoutProduits.ajouterDureeDeLaPrise("2");
+		moduleAjoutProduits.ajouterDureeDeLaPrise2("0");
+		moduleAjoutProduits.selectUniteDeTempsDeLaDuree("semaine");
+		//moduleAjoutProduits.prescrire();
+		//Log.info("on verifie existence alert Attention ! la durée maximale est : 28 jour(s)");
+		Assert.assertTrue(moduleAjoutProduits.recuperAlertQantiteMaximale()
+				.contains("Attention ! la quantité journalière minimale recommandée est : 1.6 ml"));
+		
+
+}
+
+}

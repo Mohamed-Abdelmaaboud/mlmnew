@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="1" total="1" passed="0" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2023-08-22T18:21:58 EET" name="Default suite" finished-at="2023-08-22T18:21:58 EET" duration-ms="9">
+    <groups>
+    </groups>
+    <test started-at="2023-08-22T18:21:58 EET" name="Default test" finished-at="2023-08-22T18:21:58 EET" duration-ms="9">
+      <class name="test.CQ_1118_TxtCtrl_Utilisation_de_l_éditeur_de_texte_depuis_la_Prescription_Complémentaire">
+        <test-method is-config="true" signature="beforeSuite()[pri:0, instance:test.CQ_1118_TxtCtrl_Utilisation_de_l_éditeur_de_texte_depuis_la_Prescription_Complémentaire@7b98f307]" started-at="2023-08-22T18:21:58 EET" name="beforeSuite" finished-at="2023-08-22T18:21:58 EET" duration-ms="5" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeSuite -->
+      </class> <!-- test.CQ_1118_TxtCtrl_Utilisation_de_l_éditeur_de_texte_depuis_la_Prescription_Complémentaire -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

@@ -1,0 +1,52 @@
+package test;
+
+import org.testng.annotations.Test;
+
+import listener.annotation.Xray;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageIntegrationDesResultatsDeLaboratoire;
+import page.models.PageListePatient;
+
+public class CQ_379_Intégrer_fichier_ESSAI19 extends BaseTest {
+	@Test
+	@Xray(test="CQ-379")
+	public void Intégrer_fichier_ESSAI1() throws InterruptedException {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatient = new PageDossierPatients();
+		 pageDossierPatient.recherchePatient("HPRIM");
+		pageDossierPatient.InactiverPatient("TEST");
+		pageDossierPatient.retourAccueil();
+		pageAccueil.ouvrirMenuDeLaBarreDesMenus("Dossier Médical");
+		pageAccueil.ouvrirSousMenuDeLaBarreDesMenus("Documents médicaux");
+		pageAccueil.ouvrirMenuDeLaBarreDesMenus("Documents médicaux en attente");
+		PageIntegrationDesResultatsDeLaboratoire pageIntegrationDesResultatsDeLaboratoire = new PageIntegrationDesResultatsDeLaboratoire();
+		pageIntegrationDesResultatsDeLaboratoire.verifier_inexistence_examen_labo_supprimer_les_en_cas_existence();
+		pageIntegrationDesResultatsDeLaboratoire.importerUnFichierHPrim(System.getProperty("user.dir") +'/'+ "src" +'/'+"test" +'/'+ "resources" +'/'+ "HPRIM_fichiers" +'/'+ "ESSAI19 LABO19.HP2");
+		pageIntegrationDesResultatsDeLaboratoire.integrerLeResultatEtCreerNouveauPatient();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		pageDossierAdministratif.renseignerNomDeNaissance("HPRIM CQ379");
+		pageDossierAdministratif.renseignerNom("HPRIM CQ379");
+		pageDossierAdministratif.choisirSexe("Masculin");
+    	pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		pageIntegrationDesResultatsDeLaboratoire.validerIntegrationResultatApresCreerPatient("HPRIM CQ379");
+		pageIntegrationDesResultatsDeLaboratoire.retourAccueil();
+		pageAccueil.rechercherLePatientAvecLeNomEtOuvrirSonDossierMedical("HPRIM CQ379");
+	    PageDossierMedical pageDossierMedical = new PageDossierMedical();
+	    pageDossierMedical.verifier_existance_des_examens_labo_dans_plusieurs_sections("Prescriptions complémentaires", "Examens de Laboratoire");
+	    pageDossierMedical.verifier_existance_des_examens_labo_dans_plusieurs_sections("Résultat Labo","Hématies, Hémoglobine (Hb)");
+	    pageDossierMedical.verifier_existance_des_examens_labo_dans_plusieurs_sections("Examens de laboratoire","Hématies, Hémoglobine (Hb)");
+	    pageDossierMedical.verifier_existance_des_examens_labo_dans_documents_externes("Documents externes","Document du 11/06/2010");
+	}
+
+}

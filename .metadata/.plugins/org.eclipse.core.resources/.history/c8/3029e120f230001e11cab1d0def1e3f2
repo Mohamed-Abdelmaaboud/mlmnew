@@ -1,0 +1,192 @@
+package page.module;
+
+import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import net.rcarz.jiraclient.JiraException;
+import page.models.BasePage;
+
+public class MLM extends BasePage {
+	//private static String version = "Undefined";
+	//private static String VM = "Undefined";
+	private static String version;
+	private static String VM ;
+	public static String getVM() {
+		//if (VM.equals("Undefined")) {
+			driver.switchTo().defaultContent();
+			List<WebElement> VMElement = driver.findElements(By.cssSelector(".version span"));
+			if (VMElement.size() > 0) {
+				String[] mlmVersionTexts = VMElement.get(0).getText().split(" ");
+				VM = mlmVersionTexts[mlmVersionTexts.length - 1];
+			}
+		//}
+		return VM;
+	}
+	
+	public static String getVersion() {
+		//if (version.equals("Undefined")) {
+			driver.switchTo().defaultContent();
+			List<WebElement> VMElement = driver.findElements(By.cssSelector(".version span"));
+			if (VMElement.size() > 0) {
+				String[] mlmVersionTexts = VMElement.get(0).getText().split(" ");
+				String version = mlmVersionTexts[mlmVersionTexts.length - 2].replaceAll("[^0-9.]", "");
+				System.out.println("MLM version is :"+version);
+			}
+	//}
+		return version;
+}
+	/*public static void Update_Test_Execution_Results() throws JiraException, MalformedURLException, InterruptedException {
+
+		//Open BCB Link and Login
+
+
+		driver.get("https://mlmpreprod.monlogicielmedical.com");
+		driver.manage().window().maximize();
+		Thread.sleep(5000);
+
+		if(driver.findElement(By.xpath("//button[contains(text(),'Tout Accepter')]")).isDisplayed()){
+			WebElement acceptall=driver.findElement(By.xpath("//button[contains(text(),'Tout Accepter')]"));
+			acceptall.click();
+		}
+		Thread.sleep(5000);
+		WebElement User = driver.findElement(By.name("username"));
+		User.sendKeys("PROJET_BCB");
+		Thread.sleep(5000);
+		WebElement PassWord = driver.findElement(By.name("password"));
+		PassWord.sendKeys("Azerty1*"); 
+		Thread.sleep(6000);
+		WebElement LogInButton = driver.findElement(By.id("submitBtn"));
+		LogInButton.click();
+		Thread.sleep(5000);
+		if(!driver.getCurrentUrl().contains("https://mlmpreprod.monlogicielmedical.com")){
+			System.out.println("login failed");
+			WebElement User2 = driver.findElement(By.xpath("//*[contains(@name,'username')]"));
+			User2.sendKeys("PROJET_BCB");
+			//	Thread.sleep(5000);
+			WebElement PassWord2 = driver.findElement(By.xpath("//*[contains(@name,'password')]"));
+			PassWord2.sendKeys("Azerty1*");
+			Thread.sleep(5000);
+			WebElement LogInButton2 = driver.findElement(By.id("submitBtn"));
+			LogInButton2.click();
+		}
+		else{
+			System.out.println("login passed");
+
+		}
+
+		//get current date and time to use it later in the issue title
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+
+		//get current Version
+
+		WebElement version = driver.findElement(By.xpath("//div[contains(@class,'version float-left')]"));
+		String version_Name = version.getText();
+		System.out.println("MLM Version is "+version_Name);
+		final String version_Name_Numbers = version_Name.substring(5, 13);
+
+		System.out.println(version_Name_Numbers);
+		Thread.sleep(5000);
+
+
+		//open Jira Issues page and Login
+		driver.get("https://jirachs.cegedim.com/projects/MLM/issues");
+		driver.manage().window().maximize();
+		WebElement user = driver.findElement(By.id("login-form-username"));
+		user.sendKeys("sa_gen_ci");
+		Thread.sleep(7000);
+		WebElement pass = driver.findElement(By.id("login-form-password"));
+		pass.sendKeys("C8cFi6cPF7G2auqXy787");
+		Thread.sleep(7000);
+		WebElement login = driver.findElement(By.id("login-form-submit"));
+		login.click();
+		Thread.sleep(7000);
+
+		//update searching for execution
+		WebElement findIssue= driver.findElement(By.id("find_link"));
+		findIssue.click();
+
+		Thread.sleep(5000);
+
+		WebElement reported_by_me= driver.findElement(By.id("filter_lnk_reported_lnk"));
+		//	reported_by_me.click();
+		JavascriptExecutor executor = (JavascriptExecutor)driver;
+		executor.executeScript("arguments[0].click();", reported_by_me);
+		
+
+
+		Thread.sleep(500);
+
+		//	WebElement issuesSideMenu= driver.findElement(By.xpath("//a[contains(@title,'Created recently')]"));
+		//issuesSideMenu.click();
+
+		Thread.sleep(5000);
+
+		//get last execution issue ID by its title
+		WebElement issueTitle = driver.findElement(By.xpath("//span[contains(text(), '[PP] TNR MAIIA AGENDA -')]"));
+		//WebElement issueTitle = driver.findElement(By.xpath("//span[contains(text(), 'MLM [PP] - TNR BCB - "+ dateFormat.format(date)+"')]"));
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].scrollIntoView(true);", issueTitle);
+		issueTitle.click();
+		Thread.sleep(7000);
+
+
+		//save issue ID in a variable
+		WebElement issueId = driver.findElement(By.id("key-val"));
+		String IdValue = issueId.getAttribute("innerHTML");
+		System.out.println("Execution ID to update is: " + IdValue);
+		Thread.sleep(7000);
+
+
+		//open the exeuction page by its saved id
+		driver.get("https://jirachs.cegedim.com/browse/" + IdValue);
+		Thread.sleep(7000);
+
+		//update issue version field
+		List<WebElement> countEditIcons = driver.findElements(By.xpath("//span[contains(@class, 'overlay-icon aui-icon aui-icon-small aui-iconfont-edit')]"));
+		System.out.println(countEditIcons);
+		//((JavascriptExecutor) driver).executeScript("arguments[0].click();", countEditIcons.get(2));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", countEditIcons.get(1));
+		Thread.sleep(5000);
+		//WebElement EditIcon_TextArea = driver.findElement(By.id("fixVersions-textarea"));
+		WebElement EditIcon_TextArea = driver.findElement(By.id("versions-textarea"));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", EditIcon_TextArea);
+		Thread.sleep(5000);
+		EditIcon_TextArea.sendKeys(Keys.BACK_SPACE);
+		EditIcon_TextArea.sendKeys(version_Name_Numbers);
+		Thread.sleep(5000);
+		WebElement searchField = driver.findElement(By.id("quickSearchInput"));
+		searchField.click();
+		Thread.sleep(5000);
+
+		int CountError = driver.findElements(By.xpath("//*[contains(text(), '" + "does not exist." + "')]")).size();
+
+		if(CountError>0) {
+
+			WebElement EditIcon_TextArea_2 = driver.findElement(By.id("versions-val"));
+			((JavascriptExecutor) driver).executeScript("arguments[0].click();", EditIcon_TextArea_2);
+			Thread.sleep(5000);
+			EditIcon_TextArea_2.sendKeys(Keys.RETURN);
+			Thread.sleep(5000);
+			WebElement Accept = driver.findElement(By.xpath("//button[contains(@class, 'aui-button submit') and contains(@type, 'submit')and contains(@title, 'Press Alt+s to submit this form')]"));
+			Accept.click();
+			Thread.sleep(5000);
+		}
+		else {
+			WebElement searchField1 = driver.findElement(By.id("quickSearchInput"));
+			searchField1.click();
+			Thread.sleep(5000);
+		}
+	}*/
+
+}
+

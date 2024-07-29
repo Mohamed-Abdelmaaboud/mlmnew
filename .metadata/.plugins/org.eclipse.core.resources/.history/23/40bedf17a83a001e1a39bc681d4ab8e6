@@ -1,0 +1,155 @@
+package page.module;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+
+import clm.interop.Log;
+import page.models.BasePage;
+
+public class ModuleDocumentsExpress extends BasePage{
+	
+	By frame_document_express = By.id("iframe-doc-popup");
+	By bouton_fermer_completer_installation = By.cssSelector(".dynamsoft-dialog-close");
+	By importer_documents = By.id("buttonSelect");
+	JavascriptExecutor js = (JavascriptExecutor) driver; 
+	By champ_recherche_patient = By.cssSelector("[id*='autocomplete']");
+	By bouton_valider = By.id("startButton");
+	By confirmation_import_ok = By.cssSelector("[id='progress-status']");
+	By onglet_liste_documents_importes = By.xpath("//a[contains(text(),'Liste des documents importés')]");
+	By liste_document = By.id("documentListDiv");
+	By bouton_valider_tous_les_documents = By.xpath("//button[contains(text(),'Valider tous les documents')]");
+	By bouton_confirmation_valider_tous_les_documents = By.id("acceptConfirmMessage");
+	By bouton_fermer_module_import_express = By.cssSelector("[class*='x-tool-close']");
+	By module_import_express = By.id("winPopupMed");
+	
+	public ModuleDocumentsExpress () {
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame_document_express));
+		Log.info("On clique sur le bouton OK pour valider la création du nouveau dossier");
+	}
+
+	public void VerifierPoPuPCompleterInstallation() throws InterruptedException {
+		Log.info("On va vérifier la présence de  l'alerte de completion de l'installation");
+		Thread.sleep(4000);
+		List<WebElement> PopUpDynamsoft = driver.findElements(bouton_fermer_completer_installation);
+		if (PopUpDynamsoft.size() > 0)
+		{
+			fermerPoPuPCompleterInstallation();
+		}
+	}
+
+	public void fermerPoPuPCompleterInstallation() {
+		Log.info("On va fermer la popup avec le titre compléter installation");
+		wait.until(ExpectedConditions.presenceOfElementLocated(bouton_fermer_completer_installation));
+		click(bouton_fermer_completer_installation);
+		Log.info("La popup avec le titre compléter installation a été fermée");
+	}
+	
+	public void selectionnerPatient(String nomPatient) {
+		Log.info("On va selectionner le patient");
+		input(nomPatient, champ_recherche_patient);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//strong[contains(text(),'%s')]",nomPatient))));
+		click(By.xpath(String.format("//strong[contains(text(),'%s')]",nomPatient)));
+	}
+	
+	
+	public void importerDocument(String nomFichier) {
+		Log.info("On va importer un document");
+		WebElement input_upload = driver.findElement(By.id("fileInput"));
+		js.executeScript("arguments[0].style.display = '';; arguments[0].style.height = '1px'; arguments[0].style.width = '1px'; arguments[0].style.opacity = 1", input_upload);
+		//driver.setFileDetector(new LocalFileDetector()); Pour sauceLabs ,a decommenter
+		input(System.getProperty("user.dir") +'/'+ "src" +'/'+"test" +'/'+ "resources" +'/'+ "Devcon" +'/'+ nomFichier,input_upload);
+	}
+
+	public void validerImportDocument() {
+		Log.info("On valider l'import des documents");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_valider));
+		click(bouton_valider);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(confirmation_import_ok));
+		Log.info("Les documents ont été importés avec succès");
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(confirmation_import_ok));
+		//verif document present : //td[contains(text(),'Fileristest-20220616162654')]/following::input[@value="PDFfile"]
+	}
+	
+	public void ouvrirListeDesDocumentsImportes() {
+		Log.info("On va cliquer sur l'onglet liste des documents importés");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(onglet_liste_documents_importes));
+		click(onglet_liste_documents_importes);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(liste_document));
+		Log.info("la liste des documents est affiché");
+	}
+	
+	public void rechercherPatient(String nomPatient) {
+		Log.info("On va rechercher le patient avec le nom : " + nomPatient + " pour afficher les documents importés");
+		wait.until(ExpectedConditions.presenceOfElementLocated(champ_recherche_patient));
+		input(nomPatient, champ_recherche_patient);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//strong[contains(text(),'%s')]",nomPatient))));
+		click(By.xpath(String.format("//strong[contains(text(),'%s')]",nomPatient)));
+		WebElement d=driver.findElement(By.id("destinatary"));
+		Select x=new Select(d);
+		x.selectByVisibleText("Tous");
+	}
+	
+	public void verifierPresenceDocuments(String nomPatient ,String descriptionDocument) {
+		Log.info("On va vérifier la présence du document : " + descriptionDocument);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//td[contains(text(),'%s')]/following::input[@value='%s']", nomPatient, descriptionDocument))));
+		Log.info("Le document avec pour description : " + descriptionDocument + "est bien présent dans la liste des documents");
+	}
+	
+	public void validerTousLesDocumentsImportes() {
+		Log.info("On va valider tous les documents importés depuis la liste des documents importés");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_valider_tous_les_documents));
+		click(bouton_valider_tous_les_documents);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_confirmation_valider_tous_les_documents));
+		click(bouton_confirmation_valider_tous_les_documents);
+	}
+	
+	public void fermerModuleImportExpress() throws InterruptedException {
+		Log.info("On va fermer le module document express");
+		switchToDefault();
+		Thread.sleep(3000);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_fermer_module_import_express));
+		click(bouton_fermer_module_import_express);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(module_import_express));
+		
+	}
+	
+	public void verifierPresenceDocumentsExpressDossierMedical(String descriptionDocument) {
+		Log.info("On va vérifier la présence du document : " + descriptionDocument);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDateTime date = LocalDateTime.now();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//input[@value='%s']/../following-sibling::td[contains(text(),'"+formatter.format(date)+"')]", descriptionDocument))));
+		Log.info("Le document avec pour description : " + descriptionDocument + "est bien présent dans la liste des documents");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,76 @@
+package test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.testng.annotations.Test;
+
+import listener.annotation.Xray;
+import page.models.OrdonnancePDF;
+import page.models.PageAccueil;
+import page.models.PageConnexion;
+import page.models.PageDossierAdministratif;
+import page.models.PageDossierMedical;
+import page.models.PageDossierPatients;
+import page.models.PageListePatient;
+import page.models.PageResultatDesOrdonnances;
+import page.models.TextEditorPage;
+
+public class CQ_1119_TxtCtrl_Utilisation_éditeur_de_texte_depuis_la_Biologie extends BaseTest{
+	
+	@Test
+	@Xray(test="CQ-119")
+	public void TxtCtrl_Utilisation_d_un_modèle_crée() {
+		PageConnexion pageConnexion = new PageConnexion();
+		PageAccueil pageAccueil = new PageAccueil();
+		pageConnexion.seConnecterParLoginEtMotDePasse();
+		pageAccueil.accepterNoteCentre();
+		pageAccueil.ouvrirMenuDeGauche("Dossier Patients");
+		PageDossierPatients pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.créerNouveauDossier();
+		PageDossierAdministratif pageDossierAdministratif = new PageDossierAdministratif();
+		pageDossierAdministratif.recueilDuConsentementDuPatient();
+		String nomPatient = pageDossierAdministratif.renseignerNom("TEXTCTRL");
+		pageDossierAdministratif.renseignerNomDeNaissance("TEXTCTRL");
+		pageDossierAdministratif.renseignerPrenom("CQ119");
+		pageDossierAdministratif.choisirSexe("Masculin");
+		pageDossierAdministratif.renseignerLocalitDeNaissance("paris");
+		pageDossierAdministratif.renseignerDateDeNaissance("29/4/2000");
+		pageDossierAdministratif.validerCreationNouveauDossier();
+		pageDossierAdministratif.validerCriteresDeVerification();
+		PageListePatient pageListePatients = new PageListePatient();
+		pageDossierPatients = new PageDossierPatients();
+		pageDossierPatients.retourAccueil();
+		pageAccueil.rechercherLePatientAvecLeNomEtOuvrirSonDossierMedical(nomPatient);
+		PageDossierMedical pageDossierMedical = new PageDossierMedical();
+		pageDossierMedical.ouvrirExamenDeLaboratoire();
+		PageResultatDesOrdonnances pageResultatDesOrdonnances =new PageResultatDesOrdonnances();
+		pageResultatDesOrdonnances.creer_nouveau_prelevement();
+		pageResultatDesOrdonnances.recherche_un_examen("Hemoglobine");
+		pageResultatDesOrdonnances.choisir_examen("Hémoglobine (Hb)");
+		pageResultatDesOrdonnances.saisie_valeur_en_UI("9","8","11","Hémoglobine (Hb)");
+		pageResultatDesOrdonnances.recherche_un_examen("Temps de coagulation");
+		pageResultatDesOrdonnances.choisir_examen("Temps de coagulation");
+		pageResultatDesOrdonnances.saisie_valeur_en_UI("10","8","12","Temps de coagulation");
+		pageResultatDesOrdonnances.imprimer_les_examens_en_editeur_texte();
+		pageResultatDesOrdonnances.switchTowindow(1);
+		TextEditorPage textEditorPage = new TextEditorPage();
+		textEditorPage.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Hémoglobine (Hb)");
+		textEditorPage.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Temps de coagulation");
+		textEditorPage.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","14.52");
+		textEditorPage.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","10");
+		textEditorPage.imprimer_le_document_en_pdf();
+		textEditorPage.switchTowindow(2);
+		OrdonnancePDF ordonnancePDF = new OrdonnancePDF();
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Hémoglobine (Hb)");
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","Temps de coagulation");
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","14.52");
+		ordonnancePDF.verifier_contenu_de_l_ordonnace("https://mlmpreprod.monlogicielmedical.com/react-reports/report","10");
+	}
+	
+	
+	
+	
+	
+
+}

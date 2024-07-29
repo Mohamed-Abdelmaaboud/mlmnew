@@ -1,0 +1,155 @@
+package page.models;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.openqa.selenium.By;
+import org.testng.Assert;
+
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+
+import clm.interop.Log;
+
+public class OrdonnancePDF extends BasePage{
+	
+	public void verifier_contenu_de_l_ordonnace(String text) {
+		Log.info("on verifie contenu de l'ordonnance");
+		try {
+			String pdfContent = readPdfContent();
+			Assert.assertTrue(pdfContent.contains(text));
+			Log.info("les textes ajoutes existent dans le pdf" + pdfContent);
+		
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Log.info("les textes ajoutes existent dans le pdf");
+		
+		//driver.close();
+	}
+
+	public static  String readPdfContent() throws IOException {
+	
+
+	    String 	url = FileDownloaded_Ext("C:\\\\Users\\\\mabdelmaaboud\\\\Downloads","pdf");
+		
+		URL pdfUrl = new URL(url);
+		InputStream in = pdfUrl.openStream();
+		BufferedInputStream bf = new BufferedInputStream(in);
+		PDDocument doc = PDDocument.load(bf);
+		String content = new PDFTextStripper().getText(doc);
+		doc.close();
+
+	return content;
+	}
+	
+	
+	public void switchTowindow(int window) {
+		List <String> windows = new ArrayList<String>(driver.getWindowHandles());
+		driver.switchTo().window(windows.get(window));
+	}
+
+	public void fermer_window() {
+		driver.close();
+	}
+	
+	public void readpdfItext(String text) {
+		try {
+//			//Create PdfReader instance.
+//			URL pdfUrl = new URL(driver.getCurrentUrl());
+//			InputStream in = pdfUrl.openStream();
+//			BufferedInputStream bf = new BufferedInputStream(in);
+			  String 	url = FileDownloaded_Ext("C:\\\\Users\\\\mabdelmaaboud\\\\Downloads","pdf");
+			PdfReader pdfReader = new PdfReader(url);	
+		 
+			//Get the number of pages in pdf.
+			int pages = pdfReader.getNumberOfPages(); 
+		 
+			//Iterate the pdf through pages.
+			for(int i=1; i<=pages; i++) { 
+			  //Extract the page content using PdfTextExtractor.
+			  String pageContent = 
+			  	PdfTextExtractor.getTextFromPage(pdfReader, i);
+		 Assert.assertTrue(pageContent.contains(text));
+			  //Print the page content on console.
+			  System.out.println("Content on Page "
+			  		              + i + ": " + pageContent);
+		      }
+		 
+		      //Close the PdfReader.
+		      pdfReader.close();
+		    } catch (Exception e) {
+			e.printStackTrace();
+		    }
+		  }
+	
+	public void renommeDownloadPDF() {
+		Log.info("on renomme le pdf qui telecharge pour pouvoir l'utiliser");
+		  // Create an object of the File class
+        // Replace the file path with path of the directory
+        File file = new File("/home/mayur/Folder/GFG.java");
+  
+        // Create an object of the File class
+        // Replace the file path with path of the directory
+        File rename = new File("/home/mayur/Folder/HelloWorld.java");
+  
+        // store the return value of renameTo() method in
+        // flag
+        boolean flag = file.renameTo(rename);
+  
+        // if renameTo() return true then if block is
+        // executed
+        if (flag == true) {
+            System.out.println("File Successfully Rename");
+        }
+        // if renameTo() return false then else block is
+        // executed
+        else {
+            System.out.println("Operation Failed");
+        }
+    }
+	
+	
+	
+	private static String FileDownloaded_Ext(String dirPath, String ext){
+		boolean flag=false;
+		String fileName = dirPath + ext;
+	    File dir = new File(dirPath);
+	    File[] files = dir.listFiles();
+	    if (files == null || files.length == 0) {
+	        flag = false;
+	    }
+	    
+	    for (int i = 1; i < files.length; i++) {
+	    	if(files[i].getName().contains(ext)) {
+	    		flag=true;
+	    	
+	    	}
+	    }
+	 
+	    return fileName;
+	}
+	
+	
+	
+	
+	}
+
+	
+	
+	
+	
+	
+	

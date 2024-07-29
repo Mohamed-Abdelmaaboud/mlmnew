@@ -1,0 +1,6 @@
+url=https://ondemand.eu-central-1.saucelabs.com:443/wd/hub
+accessKey=5b27ce10-0ec5-4de8-8c4e-3d6d6040ad6d
+username=CLM-QA
+browserName=chrome
+version=93
+platform=Windows 10

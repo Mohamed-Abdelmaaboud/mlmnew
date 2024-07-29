@@ -1,0 +1,512 @@
+package page.models;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.net.URL;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.testng.Assert;
+
+import clm.interop.Log;
+import clm.interop.enumerator.Position;
+
+public class PageDossierMedical extends BasePage {
+
+	String urlDossierMedical = "https://mlmpreprod.monlogicielmedical.com/jenomi/tapizTheme.htm";
+	//	By bouton_plus_prescription_de_medicaments = By.xpath("//div[contains(@class,'x-tool x-tool-plus prescripciones')]");
+
+	//	By bouton_plus_prescription_de_medicaments = By.xpath("//a[text() = 'Prescriptions de médicaments']/parent::span/preceding-sibling::div[contains(@class, 'plus')]");
+	By bouton_plus_prescription_de_medicaments = By.xpath("//a[contains(text(),'Prescriptions de médicaments')]");
+	By bouton_plus_prescription_complentaires = By.xpath("//div[contains(@class,'x-tool x-tool-plus NonDrugPrescription')]");
+	By bouton_plus_prescription_vaccins = By.xpath("//div[contains(@class,'x-tool x-tool-plus vacunas')]");
+	By bouton_plus_observations = By.xpath("//div[contains(@class,'cursos')]");
+	By bouton_ok_observations = By.xpath("//button[@id='boton2.aceptar']");
+	By bouton_retour_observations = By.xpath("//button[@id='boton2.volver']");
+	By bouton_suivant_observations = By.xpath("//button[@class='b_history']");
+	By bouton_supprimer_observations = By.xpath("//button[@id='comun.eliminar']");
+	By link_prescription_de_medicaments = By.xpath("//a[contains(text(),'Prescriptions de médicaments')]");
+	By page_dossier_medical = By.cssSelector("[id='cuerpo']");
+	By bouton_Profil = By.id("userOptionsBtn");
+	By bouton_deconnexion = By.xpath("//a[contains(text(),'Déconnexion')]");
+	By bouton_plus_ajout_examen_laboratoire = By.xpath("//div[contains(@class,'x-tool x-tool-plus LabResults')]");
+	By context_menu_partager = By.xpath("//a[text() = 'Partager']");
+	By logoMLM = By.id("img_logo");
+	By retour_accueil = By.xpath("//a[@name='breadCrumbs' and @title='Accueil']");
+	By popup_nouveaux_documents = By.xpath("//h2[contains(text(),'Nouveaux Documents')]");
+	By popup_nouveaux_documents_disponibles = By.xpath("//div[contains(text(),'Nouveaux documents disponibles')]");
+	By link_voir_les_details = By.xpath("//div[contains(text(),'Voir les détails')]");
+	By bouton_plus_documents = By.cssSelector("[class*='x-tool-plus informes']");
+	By popup_selection_document = By.cssSelector("[id='1191']");
+	By champ_recherche_document = By.cssSelector("[id='txtSearch']");
+	By bouton_oui_nouvelle_gestion_des_documents = By.id("dialogButtonId_1");
+	By bouton_plus_ajout_document_externe = By.cssSelector("[class*='x-tool-plus documentosExternos']");
+	By bouton_plus_ajout_document = By.xpath("//div[contains(@class,'informes')]");
+	By bouton_ajout_document_vierge = By.xpath("//button[.='Nouveau document vierge']");
+
+	//	By bouton_fermer_completer_installation = By.cssSelector("[class*='dialog-close']");
+	JavascriptExecutor js = (JavascriptExecutor) driver;
+	//	By bouton_ajouter_document_externes = By.id("addbutton");
+	By bouton_fermer_popup_documents_externe = By.cssSelector("[class*='x-tool-close']");
+	By popup_apercu_document = By.cssSelector("[id='winPopupMed']");
+	//	By bouton_apercu_document_a_partager = By.id("document-preview-share");
+	By bouton_sauvegarder = By.xpath("//span[contains(text(),'Sauvegarder')]");
+	By bouton_plus_ajout_formulaire_specifiques = By.xpath("//div[contains(@class,'x-tool x-tool-plus protocolos')]");
+	By popup_selection_formulaire = By.xpath("//div[contains(@ID,\"winNuevo\")]//span[contains(.,\"formulaire\")]");
+	By champ_recherche_formulaire = By.id("txtSearch");
+	By champ_titre_observation = By.xpath("//input[@id='title']");
+	By iframe_observation = By.xpath("//iframe[@id='editorHTML_ifr']");
+	By champ_contenu_observation = By.xpath("//body[@data-id='editorHTML']/div");
+	By formulaire_cerfa_arret_travail = By.xpath("//span[contains(.,'Cerfa') and contains(.,'travail')]");
+	By formulaire_cerfa_ehpad = By.xpath("//span[contains(.,'Cerfa') and contains(.,'EHPAD')]");
+	By bouton_supprimer_formulaire = By.xpath("//a[contains(@class,\"remove\")]//img[contains(@src,\"error.png\")]");
+	By valider_supprimer_formulaire = By.xpath("//button[@id=\"dialogButtonId_1\" and contains(.,\"Oui\")]");
+
+	public PageDossierMedical() {
+		Log.info("On affiche le dossier medical");
+		Log.info("Le dossier medical est bien affiché");
+	}
+
+	public void verifierQueLeDossierMedicalEstBienAffiché() {
+		Log.info("On vérifie que le dossier médical est bien affiché");
+		wait.until(ExpectedConditions.presenceOfElementLocated(bouton_plus_prescription_de_medicaments));
+		wait.until(ExpectedConditions.presenceOfElementLocated(bouton_plus_prescription_complentaires));
+		wait.until(ExpectedConditions.presenceOfElementLocated(bouton_plus_prescription_vaccins));
+		wait.until(ExpectedConditions.presenceOfElementLocated(link_prescription_de_medicaments));
+		wait.until(ExpectedConditions.presenceOfElementLocated(page_dossier_medical));
+	}
+
+
+	public void seDeconnecter() {
+		Log.info("On se deconnecte");
+		click(bouton_Profil);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_deconnexion));
+		click(bouton_deconnexion);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(bouton_deconnexion));
+		Log.info("On est bien deconnecté");
+	}
+
+	public void ouvrirExamenDeLaboratoire() {
+		Log.info("On clique sur le bouton plus pour ouvrir la liste des examens de laboratoire");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_plus_ajout_examen_laboratoire));
+		click(bouton_plus_ajout_examen_laboratoire);
+		Log.info("On peut commencer l'ajout des examens de laboratoire");
+	}
+
+	public void ouvrirPrescriptionsComplementaires() {
+		Log.info("On va prescrire des complementaires");
+		scroll(driver.findElement(By.cssSelector("[id='cuerpo']")), Position.TOP);
+		//scrollIntoView(bouton_plus_prescription_complentaires);
+		click(bouton_plus_prescription_complentaires);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(bouton_plus_prescription_complentaires));
+		Log.info("La prescription  des complementaires peut commencer");
+	}
+
+	public void verifierQueLaPrescriptionComplementaireEstBienAjouteeDansLeDossierMedical(String prescription, String pbSante) {
+		Log.info("On vérifie que la prescription de complementaires :" + prescription + "est bien ajoutée dans le dossier médical");
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//span[contains(@class, 'spaceEmptyDescription') and text() = '%s']",prescription))));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//span[contains(@class, 'spaceEmptyDescription') and text() = '%s']//following::div[text() = '%s'])[1]", prescription, pbSante))));
+		Log.info("Lla prescription de complementaires :" + prescription + "est bien ajoutée dans le dossier médical");
+	}
+
+	public void ouvrirPrescriptionMedicaments() throws InterruptedException {
+
+		Log.info("On va prescrire des medicaments");
+		//wait.until(ExpectedConditions.elementToBeClickable(bouton_plus_prescription_de_medicaments));
+		Thread.sleep(6000);
+
+		click(bouton_plus_prescription_de_medicaments);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(bouton_plus_prescription_de_medicaments));
+		Log.info("La prescription  des medicaments peut commencer");
+	}
+
+	public void partagerDansMaiia(String document) {
+		Log.info("On va partager les documents dans maiia");
+		while (elementIsPresentOnDOM(By.xpath("//div[text() = 'Document partagé avec succès!']")) == false) {
+			Actions actions = new Actions(driver);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(
+					"//div[contains(@id, 'traitements actifs-hd')]/following::span[contains(@class, 'spaceEmptyDescription') and text() = '%s']",
+					document))));
+			WebElement element = driver.findElement(By.xpath(String.format(
+					"//div[contains(@id, 'traitements actifs-hd')]/following::span[contains(@class, 'spaceEmptyDescription') and text() = '%s']",
+					document)));
+			actions.contextClick(element).perform();
+			WebElement partager = driver.findElement(By.xpath("//a[text() = 'Partager']"));
+			actions.moveToElement(partager).perform();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text() = 'Maiia']")));
+			click(By.xpath("//a[text() = 'Maiia']"));
+		}
+
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[text() = 'Document partagé avec succès!']")));
+		Log.info("Les documents ont été bien partagés dans maiia");
+	}
+
+	public void retourAccueil() throws InterruptedException {
+		Log.info("On retourne à l'accueil");
+		switchToDefault();
+		Thread.sleep(2000);
+		wait.until(ExpectedConditions.elementToBeClickable(retour_accueil));
+		click(retour_accueil);
+		Log.info("On est bien retourné à l'accueil");
+
+	}
+
+	public void voirLesDetails() {
+		Log.info("On clique sur le lien voir les details");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(popup_nouveaux_documents));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(popup_nouveaux_documents_disponibles));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(link_voir_les_details));
+		click(link_voir_les_details);
+	}
+
+
+	public void verifierPresenceDocumentsDansLeModuleDocumentExterneAvecStatutAttenteDeValidation(String nomDocument) {
+		Log.info("On vérifie que le document" + nomDocument + "est bien présent dans le module document externe avec le statut en attente de validation");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//img[@title='Document externe a valider'])[1]//following::div[@title='%s']", nomDocument))));
+		Log.info("Le document" + nomDocument + "est bien présent dans le module document externe avec le statut en attente de validation");
+	}
+
+
+	public void validerLesDocumentsImportes(String nomDocument) {
+		Log.info("On valide le document " + nomDocument);
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		Actions actions = new Actions(driver);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//div[@title='%s'])[1]", nomDocument))));
+		WebElement element = driver.findElement(By.xpath(String.format("(//div[@title='%s'])[1]", nomDocument)));
+		actions.contextClick(element).perform();
+		WebElement boutonValiderDocument = driver.findElement(By.xpath("//a[text() = 'Valider document']"));
+		executor.executeScript("arguments[0].scrollIntoView(true);", boutonValiderDocument);
+		click(boutonValiderDocument);
+		Log.info("Le document" + nomDocument + "a été bien validé");
+	}
+
+	public void verifierStatutDuDocumentApresValidation(String nomDocument) {
+		Log.info("On vérifie que le statut du document" + nomDocument + "a été bien validée,le sttaut du document passe de Document externe a valider à document externe");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//img[@title='Document externe'])[1]//following::div[@title='%s'][1]", nomDocument))));
+		Log.info("Le document" + nomDocument + "est bien présent dans le module document externe avec le statut document externe = VALIDE");
+	}
+
+	public void verifierIntegriteDocument(String nomDocument) {
+		Log.info("On clique sur le document" + nomDocument + "pour verifier qu'il s'ouvre bien dans une nouvelle fenetre");
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("(//div[@title='%s'])[1]", nomDocument))));
+		js.executeScript("arguments[0].click()", driver.findElement((By.xpath(String.format("(//div[@title='%s'])[1]", nomDocument)))));
+		//click(By.xpath(String.format("(//div[@title='%s'])[1]",nomDocument)));
+		//driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[id='winPopupMed']")));
+		click(By.cssSelector("[class*='x-tool x-tool-close']"));
+		Log.info("Le document" + nomDocument + "s'est bien ouvert");
+	}
+
+	public void verifierIntegriteDocumentDeTypeDoc(String nomDocument, String nomDocumentExt) {
+		Log.info("On clique sur le document" + nomDocument + "pour verifier qu'il s'ouvre bien dans une nouvelle fenetre");
+		//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("(//div[@title='%s'])[1]",nomDocument))));
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//div[@title='%s'])[1]",nomDocument))));
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("(//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='%s'])", nomDocument))));
+		//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='File']
+		//click(By.xpath(String.format("(//div[@title='%s'])[1]",nomDocument)));
+		click(By.xpath(String.format("(//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='%s'])", nomDocument)));
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[id='winPopupMed']")));
+		//click(By.cssSelector("[class*='x-tool x-tool-close']"));
+		Assert.assertTrue(isFileDownloaded("C:\\Users\\sa_qabdx_testauto\\Downloads", nomDocumentExt));
+
+		//Assert.assertTrue(isFileDownloaded("C:\\Users\\mabdelmaaboud\\Downloads", nomDocumentExt));
+		Log.info("Le document" + nomDocument + "s'est bien ouvert");
+	}
+
+	public void verifierIntegriteDocumentDeTypeDocx(String nomDocument) {
+		Log.info("On clique sur le document" + nomDocument + "pour verifier qu'il s'ouvre bien dans une nouvelle fenetre");
+		//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("(//div[@title='%s'])[1]",nomDocument))));
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//div[@title='%s'])[1]",nomDocument))));
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("(//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='%s'])", nomDocument))));
+		//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='File']
+		//click(By.xpath(String.format("(//div[@title='%s'])[1]",nomDocument)));
+		try {
+			js.executeScript("arguments[0].click()", driver.findElement(By.xpath(String.format("(//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='%s'])", nomDocument))));
+			//click(By.xpath(String.format("(//table[@class='x-grid3-row-table']/tbody/tr/td[7]//div[@title='%s'])",nomDocument)));
+		} catch (StaleElementReferenceException e) {
+			e.printStackTrace();
+		}
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[id='winPopupMed']")));
+		//click(By.cssSelector("[class*='x-tool x-tool-close']"));
+		Assert.assertTrue(isFileDownloaded("C:\\Users\\QA_CLM\\Downloads", nomDocument));
+
+		//Assert.assertTrue(isFileDownloaded("C:\\Users\\mabdelmaaboud\\Downloads", nomDocument));
+		//Log.info("Le document" + nomDocument + "s'est bien ouvert");
+	}
+
+	public boolean isFileDownloaded(String downloadPath, String fileName) {
+		boolean flag = false;
+		File dir = new File(downloadPath);
+		File[] dir_contents = dir.listFiles();
+
+		for (int i = 0; i < dir_contents.length; i++) {
+		//	if (dir_contents[i].getName().equals(fileName)) {
+			if (dir_contents[i].getName().contains(fileName)) {
+				return flag = true;
+			}
+		}
+
+		return flag;
+
+	}
+
+	public void verifierTitreDocumentEtPresenceIconePDF(String typeDocument, String nomdenaissance) {
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		String currentDate = formatter.format(LocalDateTime.now());
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//*[contains(text(),'%s')]", typeDocument))));
+		//WebElement element = driver.findElement(By.xpath(String.format("//*[contains(text(),'%s')]",typeDocument)));
+		//wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),\"Demande d'examen de Mr FILIRIES_TEST\")]")));
+		//Log.info("Le titre du document contient bien : " + prenomPatient + " " + nomPatient + " et la date du jour");
+		Log.info("On vérifie que l'icone PDF est bien présente en face du titre du document");
+		//	wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//div[@title=\"%s %s %s %s\"]/preceding::img[@title='Rapport']",typeDocument,prenomPatient,nomPatient.toUpperCase(),currentDate))));
+		Log.info("L'icone PDF est bien présente en face du titre du document");
+	}
+
+
+	public void verifierTitreDocumentEtPresenceIconePDF2() {
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		String currentDate = formatter.format(LocalDateTime.now());
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'Full field code - Free Editor de Mr FILIERIS_TEST')]")));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'Full field code - Free Editor de Mr FILIERIS_TEST')]/preceding::img[@title='Rapport']")));
+		//	wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'Full field code A MIGRER de Mr FILIRIES_TEST')]")));
+		//	wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'Full field code A MIGRER de Mr FILIRIES_TEST')]/preceding::img[@title='Rapport']")));
+		Log.info("L'icone PDF est bien présente en face du titre du document");
+	}
+
+	public void imprimerDocument() {
+		Log.info("On imprime le document et on verifie que l'impression s'est bien passée");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		String currentDate = formatter.format(LocalDateTime.now());
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'Full field code - Free Editor de Mr FILIERIS_TEST')]")));
+		WebElement element = driver.findElement(By.xpath("//*[contains(text(),'Full field code - Free Editor de Mr FILIERIS_TEST')]"));
+		Actions actions = new Actions(driver);
+		try {
+			actions.contextClick(element).perform();
+		} catch (StaleElementReferenceException e) {
+			e.printStackTrace();
+		}
+		click(By.xpath("//*[text() = 'Imprimer section']"));
+
+	}
+
+	public void imprimerDocument2(String typeDocument, String nomdenaissance) {
+		Log.info("On imprime le document et on verifie que l'impression s'est bien passée");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		String currentDate = formatter.format(LocalDateTime.now());
+		//wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),\"Demande d'examen de Mr FILIRIES_TEST\")]")));
+		//WebElement element = driver.findElement(By.xpath("//*[contains(text(),\"Demande d'examen de Mr FILIRIES_TEST\")]"));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//*[contains(text(),'%s')]", typeDocument))));
+		WebElement element = driver.findElement(By.xpath(String.format("//*[contains(text(),'%s')]", typeDocument)));
+		Actions actions = new Actions(driver);
+		actions.contextClick(element).perform();
+		click(By.xpath("//a[text() = 'Imprimer section']"));
+
+	}
+
+	public void selectionnerDocument(String document) throws InterruptedException {
+		Log.info("On va selectionner le document : " + document);
+		click(bouton_plus_documents);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(popup_selection_document));
+		wait.until(ExpectedConditions.presenceOfElementLocated(champ_recherche_document));
+		input(document, champ_recherche_document);
+		//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("//span[contains(text(),'%s')]",document))));
+		click(By.xpath(String.format("//span[contains(text(),\"%s\")]", document)));
+	}
+
+	public void validerModificationDocumentTextControl() {
+		wait.until(ExpectedConditions.elementToBeClickable(bouton_oui_nouvelle_gestion_des_documents));
+		Log.info("On valide l'ouverture du document Free Editor via Textcontrol");
+		click(bouton_oui_nouvelle_gestion_des_documents);
+	}
+
+	public void ouvrirPoPuPImportDocumentsExterne() {
+		Log.info("On clique sur le bouton plus pour ouvrir la popup afin de uploader un document");
+		wait.until(ExpectedConditions.presenceOfElementLocated(bouton_plus_ajout_document_externe));
+		click(bouton_plus_ajout_document_externe);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[id='iframe-doc-popup']")));
+		Log.info("La popup s'est bien ouverte afin de uploader un document");
+	}
+
+	public void ouvrirApercuDocumentExterne(String nomDocument) {
+		Log.info("On ouvre le document importé");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//div[@title='%s']", nomDocument))));
+		click(By.xpath(String.format("//div[@title='Radio main g']", nomDocument)));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(popup_apercu_document));
+		Log.info("Le document importé s'est bien ouvert");
+	}
+
+	public void verifierAttributsDocuments(String categorie, String attribut) {
+		Log.info("On vérifie que le document importé contient les bons attributs");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//div[contains(@id,'%s')]//div[@title='%s']", categorie, attribut))));
+		Log.info("Le document importé contient les bons attributs");
+	}
+
+	public void ajouterDesFormulaireSpecifiques() {
+		Log.info("On clique sur le bouton plus pour ajouter des formulaire spécifiques");
+		this.click(this.bouton_plus_ajout_formulaire_specifiques);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(this.popup_selection_formulaire));
+		Log.info("On peut commencer l'ajout des formulaire spécifiques");
+	}
+
+	public void rechercherFormulaire(String nomFormulaire) throws InterruptedException {
+		Log.info("On recherche un formulaire :" + nomFormulaire);
+		Thread.sleep(5000L);
+		this.input(nomFormulaire, this.champ_recherche_formulaire);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//span[contains(text(),\"%s\")])[1]", nomFormulaire))));
+		WebElement element = driver.findElement(By.xpath(String.format("(//span[@text()=\"%s\")])", nomFormulaire)));
+		element.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(this.popup_selection_formulaire));
+		Log.info("On a trouvé le formulaire :" + nomFormulaire);
+	}
+
+	public void rechercherFormulaire_2(String nomFormulaire) throws InterruptedException {
+		Log.info("On recherche un formulaire :" + nomFormulaire);
+		Thread.sleep(5000L);
+		this.input(nomFormulaire, this.champ_recherche_formulaire);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//span[contains(text(),\"%s\")])[1]", nomFormulaire))));
+		WebElement element = driver.findElement(By.xpath("//img[contains(@src,'img/iconoshc/protocolos.gif')]//following-sibling::span/span"));
+		Thread.sleep(500L);
+		element.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(this.popup_selection_formulaire));
+		Log.info("On a trouvé le formulaire :" + nomFormulaire);
+	}
+
+	public void rechercherFormulaire2(String nomFormulaire) throws InterruptedException {
+		Log.info("On recherche un formulaire :" + nomFormulaire);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(this.champ_recherche_formulaire));
+		this.input(nomFormulaire, this.champ_recherche_formulaire);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("(//span[contains(text(),\"%s\")])[1]", nomFormulaire))));
+		WebElement element = driver.findElement(By.xpath("//tr/td[4]/div/span"));
+		element.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(this.popup_selection_formulaire));
+		Log.info("On a trouvé le formulaire :" + nomFormulaire);
+	}
+
+	public void verifierQueLeFormulaireEstBienPresentDansLeDossierMedical(String formulaire) throws InterruptedException {
+		Log.info("On vérifie que le formulaire a été bien ajouté et est présent dans le dossier medical :" + formulaire);
+		Thread.sleep(3000L);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//span[contains(text(),\"%s\")]", formulaire))));
+		Log.info("Le formulaire : " + formulaire + " a été bien ajouté et est présent dans le dossier medical :");
+	}
+
+	public void ouvrir_cerfa_arret_travail() {
+		Log.info("On ouvre le dernier Cerfa arrêt travail généré");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(formulaire_cerfa_arret_travail));
+		click(formulaire_cerfa_arret_travail);
+	}
+
+	public void ouvrir_cerfa_EHPAD() {
+		Log.info("On ouvre le dernier Cerfa EHPAD généré");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(formulaire_cerfa_ehpad));
+		click(formulaire_cerfa_ehpad);
+	}
+
+	public void supprimer_formulaire(String nomFormulaire) {
+		Log.info("On supprime le formulaire généré");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//span[contains(.,'%s')]", nomFormulaire))));
+		rightClick(By.xpath(String.format("//span[contains(.,'%s')]", nomFormulaire)));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_supprimer_formulaire));
+		click(bouton_supprimer_formulaire);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(valider_supprimer_formulaire));
+		click(valider_supprimer_formulaire);
+		Log.info("Le formulaire généré est bien supprimé");
+	}
+
+	public void ouvrirDossierAdministratif(String nomPatient) {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//a[@id='datos_paciente_idp' and contains (.,'%s')]", nomPatient))));
+		click(By.xpath(String.format("//a[@id='datos_paciente_idp' and contains (.,'%s')]", nomPatient)));
+	}
+
+	public void verifierPrenomDossierPatient(String prenomPatient) {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//a[@id='datos_paciente_idp' and contains (.,'%s')]", prenomPatient))));
+	}
+
+	public void retourSoinsParamedicaux() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@title='Soins Paramédicaux']")));
+		click(By.xpath("//a[@title='Soins Paramédicaux']"));
+	}
+
+	public void ouvrirVaccin() {
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'vacunas')]")));
+		click(By.xpath("//div[contains(@class, 'vacunas')]"));
+	}
+
+	public void ouvrirCalendrierVaccinal() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iframe-doc-popup")));
+		switchToFrame(By.id("iframe-doc-popup"));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains (@onclick,'CAL') and contains (.,'vaccinal')]")));
+		click(By.xpath("//a[contains (@onclick,'CAL') and contains (.,'vaccinal')]"));
+	}
+
+	public void verifierCalendrierVaccinal() {
+		WebElement ImageFile = driver.findElement(By.xpath("//img[contains (@src,'Vaccin')]"));
+		Boolean ImagePresent = (Boolean) ((JavascriptExecutor) driver).executeScript("return arguments[0].complete && typeof arguments[0].naturalWidth != \"undefined\" && arguments[0].naturalWidth > 0", ImageFile);
+		if (!ImagePresent) {
+			System.out.println("L'image ne s'affiche pas.");
+			Assert.fail();
+		} else {
+			System.out.println("L'image s'affiche.");
+		}
+	}
+
+	public void ajouterNouveauDocumentVierge() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(bouton_plus_ajout_document));
+		click(bouton_plus_ajout_document);
+		wait.until(ExpectedConditions.elementToBeClickable(bouton_ajout_document_vierge));
+		click(bouton_ajout_document_vierge);
+	}
+
+	public void validerAccesDMPetINS() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='alertMessage' and contains(.,'accès au DMP')]")));
+		click(By.xpath("//button[@id='dialogButtonId_1' and .='Accepter']"));
+	}
+
+	public void validerAccesDMPetINS2() {
+		
+		if(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[text()='Non']")))!=null) {
+			click(By.xpath("//button[text()='Non']"));
+		}else {
+			Log.info("y a pas de message");
+		}
+		
+	}
+	
+	public void ouvrirDocumentViergeEnregistre() throws InterruptedException {
+		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@title,'*Courrier vierge')]")));
+		click(By.xpath("//div[contains(@title,'*Courrier vierge')]"));
+	}
+
+	public void verifierIconeDocumentValide() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//img[@src='img/iconoshc/doc_pdf.png']")));
+	}
+
+	public void verifierImpossibiliteSupprimerDocumentValider() {
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@title,'Courrier vierge')]")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@title,'Courrier vierge')]")));
+		rightClick(By.xpath("//div[contains(@title,'Courrier vierge')]"));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(.,'Supprimer') and contains(@class,'remove')]")));
+		click(By.xpath("//a[contains(.,'Supprimer') and contains(@class,'remove')]"));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(.,'Un rapport définitif ne peut pas être supprimé.') and @id='alertMessage']")));
+		click(By.xpath("//button[@id='dialogButtonId_1' and .='Accepter']"));
+	}
+
+	public void verifierPresenceDocumentExterne(String nomDocumentExterne){
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//div[@title='%s'][1]", nomDocumentExterne))));
+		Log.info("Le document externe ciblé est bien existant");
+	}
+}
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;MLM.java&apos; to &apos;mlm-filieris-preprod/src/test/java/page.module&apos;&#x0D;&#x0A;- Original project: &apos;maiia-agenda-preprod&apos;&#x0D;&#x0A;- Destination element: &apos;mlm-filieris-preprod/src/test/java/page.module&apos;&#x0D;&#x0A;- Original element: &apos;page.module.MLM.java&apos;" description="Copy compilation unit" destination="=mlm-filieris-preprod/src\/test\/java=/optional=/true=/=/maven.pomderived=/true=/=/test=/true=/&lt;page.module" element1="/src\/test\/java=/optional=/true=/=/maven.pomderived=/true=/=/test=/true=/&lt;page.module{MLM.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1692088731772" units="1" version="1.0"/>
+</session>

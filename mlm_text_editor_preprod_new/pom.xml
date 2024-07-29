@@ -1,0 +1,238 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cegedim.clm</groupId>
+	<artifactId>mlm_text_editor_preprod_new</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<name>mlm_text_editor_preprod_new</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<maven-compiler-version>3.8.1</maven-compiler-version>
+		<maven-surefire-version>3.0.0-M3</maven-surefire-version>
+
+
+		<testng-version>7.4.0</testng-version>
+		<selenium-version>3.141.59</selenium-version>
+		<!--<selenium-version>4.11.0</selenium-version>-->
+		<!--<webdrivermanager-version>4.4.3</webdrivermanager-version>-->
+		<webdrivermanager-version>5.4.1</webdrivermanager-version>
+		<log4j-version>2.14.1</log4j-version>
+		<ini4j-version>0.5.4</ini4j-version>
+		<jira-client-version>0.5</jira-client-version>
+		<extentreports-version>5.0.8</extentreports-version>
+
+		<socle-interop-version>3.1-QACGS-SNAPSHOT</socle-interop-version>
+		<!--<socle-interop-version>1.0-SNAPSHOT</socle-interop-version>! -->
+		<execution.browser></execution.browser> <!-- Let empty ! -->
+		<execution.url></execution.url> <!-- Let empty ! -->
+		<execution.highlight></execution.highlight> <!-- Let empty ! -->
+		<execution.screenshot></execution.screenshot> <!-- Let empty ! -->
+		<execution.headless></execution.headless> <!-- Let empty ! -->
+
+		<remote.url></remote.url>
+		<remote.username></remote.username>
+		<remote.accessKey></remote.accessKey>
+		<remote.browserName></remote.browserName>
+		<remote.version></remote.version>
+		<remote.platform></remote.platform>
+
+		<carte.cps></carte.cps>
+		<carte.vitale></carte.vitale>
+		<carte.without></carte.without>
+
+		<jira.testexecution></jira.testexecution>
+	</properties>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-version}</version>
+					<configuration>
+						<debug>true</debug>
+						<source>1.8</source>
+						<target>1.8</target>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-version}</version>
+
+					<configuration>
+						<systemPropertyVariables>
+							<execution.browser>${execution.browser}</execution.browser>
+							<execution.url>${execution.url}</execution.url>
+							<execution.highlight>${execution.highlight}</execution.highlight>
+							<execution.screenshot>${execution.screenshot}</execution.screenshot>
+							<execution.headless>${execution.headless}</execution.headless>
+
+							<remote.url>${remote.url}</remote.url>
+							<remote.username>${remote.username}</remote.username>
+							<remote.accessKey>${remote.accessKey}</remote.accessKey>
+							<remote.browserName>${remote.browserName}</remote.browserName>
+							<remote.version>${remote.version}</remote.version>
+							<remote.platform>${remote.platform}</remote.platform>
+
+							<carte.cps>${carte.cps}</carte.cps>
+							<carte.vitale>${carte.vitale}</carte.vitale>
+							<carte.without>${carte.without}</carte.without>
+
+							<jira.testexecution>${jira.testexecution}</jira.testexecution>
+						</systemPropertyVariables>
+						<suiteXmlFiles>
+							<suiteXmlFile>testng.xml</suiteXmlFile>
+						</suiteXmlFiles>
+
+						<properties>
+
+							<property>
+								<name>usedefaultlisteners</name>
+								<value>false</value> <!-- disabling default listeners is optional -->
+							</property>
+
+							<property>
+								<name>reporter</name>
+								<value>org.testng.reporters.XMLReporter:generateTestResultAttributes=true,generateGroupsAttribute=true</value>
+							</property>
+						</properties>
+
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.testng/testng -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng-version}</version>
+		</dependency>
+
+		<!-- https://github.com/bonigarcia/webdrivermanager -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>${webdrivermanager-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j-version}</version>
+		</dependency>
+
+		<!-- 	artifact/org.ini4j/ini4j -->
+		<dependency>
+			<groupId>org.ini4j</groupId>
+			<artifactId>ini4j</artifactId>
+			<version>${ini4j-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>${extentreports-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.rcarz/jira-client -->
+		<dependency>
+			<groupId>net.rcarz</groupId>
+			<artifactId>jira-client</artifactId>
+			<version>${jira-client-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.28</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cegedim.clm</groupId>
+			<artifactId>interop-selenium</artifactId>
+			<version>${socle-interop-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.29</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+
+
+
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>artifactory-mvn-global-mirror</id>
+			<url>https://artifactory-chs-swf.cegedim.com/artifactory/mvn-global/</url>
+		</repository>
+	</repositories>
+	<!--	<repositories>
+            <repository>
+                <id>clm-nexus-releases</id>
+                <name>Nexus releases</name>
+                <url>http://pnexusclm01.emea.cegedim.grp/repository/clm-releases</url>
+            </repository>
+
+            <repository>
+                <id>clm-nexus-snapshots</id>
+                <name>Nexus snapshots</name>
+                <url>http://pnexusclm01.emea.cegedim.grp/repository/clm-snapshots</url>
+            </repository>
+        </repositories>-->
+</project>
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;testng.xml&apos; to &apos;mlm_text_editor_preprod_new&apos;&#x0D;&#x0A;- Original project: &apos;mlm-hprim-preprod&apos;&#x0D;&#x0A;- Destination element: &apos;mlm_text_editor_preprod_new&apos;&#x0D;&#x0A;- Original element: &apos;testng.xml&apos;" description="Copy file" destination="=mlm_text_editor_preprod_new" element1="testng.xml" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1691334186491" units="0" version="1.0"/>
+</session>
